@@ -11,6 +11,7 @@ type App struct {
 	GRPCSrv *grpcapp.App
 }
 
+// New returns a new grpc application
 func New(log *slog.Logger, grpcPort int, storagePath string, tokenTTL time.Duration) *App {
 	// TODO: initialize storage
 

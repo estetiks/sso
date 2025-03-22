@@ -10,13 +10,12 @@ import (
 	"github.com/estetiks/sso/internal/config"
 )
 
-//Check change git
-
 const (
 	envLocal = "local"
 	envDev   = "dev"
 	envProd  = "prod"
 )
+
 
 func main() {
 	cfg := config.MustLoad()
