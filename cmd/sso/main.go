@@ -10,6 +10,8 @@ import (
 	"github.com/estetiks/sso/internal/config"
 )
 
+//Check change git
+
 const (
 	envLocal = "local"
 	envDev   = "dev"
