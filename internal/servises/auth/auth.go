@@ -2,13 +2,16 @@ package auth
 
 import (
 	"context"
+	"crypto"
 	"errors"
 	"fmt"
+	"hash"
 	"log/slog"
 	"time"
 
 	"github.com/estetiks/sso/internal/domain/models"
 	"github.com/estetiks/sso/internal/storage"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -84,6 +87,10 @@ func (a *Auth) Login(
 			return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 		}
 
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(password), user.PassHash); err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword)
 	}
 }
 

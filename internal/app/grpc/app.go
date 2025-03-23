@@ -40,7 +40,7 @@ func (a *App) Run() error {
 		slog.Int("port", a.port),
 	)
 
-	l, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", a.port))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", a.port))
 
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
