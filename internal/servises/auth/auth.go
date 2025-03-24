@@ -2,10 +2,8 @@ package auth
 
 import (
 	"context"
-	"crypto"
 	"errors"
 	"fmt"
-	"hash"
 	"log/slog"
 	"time"
 
@@ -82,7 +80,7 @@ func (a *Auth) Login(
 
 	if err != nil {
 		if errors.Is(err, storage.ErrUserAlreadyExist) {
-			a.log.Warn("user not foung")
+			log.Warn("user not foung")
 
 			return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 		}
@@ -90,7 +88,9 @@ func (a *Auth) Login(
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(password), user.PassHash); err != nil {
-		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword)
+		log.Info("failed to compare hash password")
+
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 }
 
@@ -99,6 +99,28 @@ func (a *Auth) RegisterNewUser(
 	email string,
 	password string,
 	appID int,
-) (string, error) {
-	panic("not implimented")
+) (int64, error) {
+	const op = "auth.RegisterNewUser"
+
+	log := a.log.With(slog.String("op", op), slog.String("email", email))
+
+	log.Info("attempting to register new user")
+
+	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	if err != nil {
+		log.Error("failed to generate password hash")
+
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	uid, err := a.userSaver.SaveUser(ctx, email, passHash)
+
+	if err != nil {
+		log.Info("failed to save new user")
+
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return uid, nil
 }
