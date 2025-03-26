@@ -8,12 +8,14 @@ import (
 	"time"
 
 	"github.com/estetiks/sso/internal/domain/models"
+	jwt_sso "github.com/estetiks/sso/internal/lib/jwt"
 	"github.com/estetiks/sso/internal/storage"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrInvalidAppID       = errors.New("invalid appID")
 )
 
 type Auth struct {
@@ -85,6 +87,10 @@ func (a *Auth) Login(
 			return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 		}
 
+		log.Info("failed to get user")
+
+		return "", fmt.Errorf("%s: %w", op, err)
+
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(password), user.PassHash); err != nil {
@@ -92,6 +98,33 @@ func (a *Auth) Login(
 
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
+
+	app, err := a.appProvider.App(ctx, appID)
+
+	if err != nil {
+		if errors.Is(err, storage.ErrAppNotFound) {
+			log.Warn("application not found")
+
+			return "", fmt.Errorf("%s: %w", op, ErrInvalidAppID)
+		}
+
+		log.Info("failed to get application")
+
+		return "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	token, err := jwt_sso.NewToken(user, app, a.tokenTTL)
+
+	if err != nil {
+		log.Info("failed to create jwt token")
+
+		return "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	log.Info("user logged in successfuly")
+
+	return token, nil
+
 }
 
 func (a *Auth) RegisterNewUser(
