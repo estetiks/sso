@@ -2,4 +2,4 @@ config/config.yaml
 
 storage/sso.db
 
-.gitigmore
+.gitignore
