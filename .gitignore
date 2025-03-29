@@ -1,3 +1,5 @@
-./storage/sso.db
+config/config.yaml
 
-./config/config.yaml
+storage/sso.db
+
+.gitigmore
