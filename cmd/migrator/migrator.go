@@ -6,6 +6,10 @@ import (
 	"fmt"
 
 	"github.com/golang-migrate/migrate/v4"
+
+	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
+
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func main() {
@@ -24,8 +28,16 @@ func main() {
 	)
 
 	if err != nil {
-		if errors.Is(err, migrate.Err) {
-			fmt.Println("")
+		panic(err)
+	}
+
+	if err := m.Up(); err != nil {
+		if errors.Is(err, migrate.ErrNoChange) {
+			fmt.Println("no migration to apply")
+
+			return
 		}
+
+		panic(err)
 	}
 }
