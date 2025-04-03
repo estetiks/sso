@@ -6,7 +6,7 @@ import (
 	"net"
 
 	authgrpc "github.com/estetiks/sso/internal/grpc/auth"
-	"github.com/estetiks/sso/internal/servises/auth"
+	"github.com/estetiks/sso/internal/services/auth"
 	"google.golang.org/grpc"
 )
 
