@@ -131,7 +131,6 @@ func (a *Auth) RegisterNewUser(
 	ctx context.Context,
 	email string,
 	password string,
-	appID int,
 ) (int64, error) {
 	const op = "auth.RegisterNewUser"
 

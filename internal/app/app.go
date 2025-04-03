@@ -5,6 +5,8 @@ import (
 	"time"
 
 	grpcapp "github.com/estetiks/sso/internal/app/grpc"
+	"github.com/estetiks/sso/internal/services/auth"
+	"github.com/estetiks/sso/internal/storage/sqlite"
 )
 
 type App struct {
@@ -13,11 +15,16 @@ type App struct {
 
 // New returns a new grpc application
 func New(log *slog.Logger, grpcPort int, storagePath string, tokenTTL time.Duration) *App {
-	// TODO: initialize storage
 
-	//TODO: init auth service
+	storage, err := sqlite.New(storagePath)
 
-	grpcApp := grpcapp.New(log, grpcPort)
+	if err != nil {
+		panic(err)
+	}
+
+	authApp := auth.New(log, storage, storage, storage, tokenTTL)
+
+	grpcApp := grpcapp.New(log, authApp, grpcPort)
 
 	return &App{
 		GRPCSrv: grpcApp,

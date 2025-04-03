@@ -20,6 +20,7 @@ type Auth interface {
 		ctx context.Context,
 		email string,
 		password string,
+		appID int,
 	) (token string, err error)
 
 	RegisterNewUser(
@@ -63,7 +64,7 @@ func (s *serverAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.
 		return nil, err
 	}
 
-	token, err := s.auth.Login(ctx, req.GetEmail(), req.GetPassword())
+	token, err := s.auth.Login(ctx, req.GetEmail(), req.GetPassword(), int(req.GetAppId()))
 
 	if err != nil {
 		// TODO: ...
