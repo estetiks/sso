@@ -93,7 +93,7 @@ func (a *Auth) Login(
 
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(password), user.PassHash); err != nil {
+	if err := bcrypt.CompareHashAndPassword(user.PassHash, []byte(password)); err != nil {
 		log.Info("failed to compare hash password")
 
 		return "", fmt.Errorf("%s: %w", op, err)
